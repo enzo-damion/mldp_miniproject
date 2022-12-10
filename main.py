@@ -22,8 +22,56 @@ def read_data(train_year=2020, val_year=2019, test_year=2021):
     return train_df, val_df, test_df
 
 def main():
+    
+    '''
+    #pour enregistrer les données 
     train_df, val_df, test_df = read_data()
-    print(train_df)
+    train_df.to_pickle("data_train.pkl")
+    val_df.to_pickle("data_val.pkl")
+    test_df.to_pickle("data_test.pkl")
+    '''
+    
+    #pour lire les données
+    train_df, val_df, test_df = pd.read_pickle("data_train.pkl"), pd.read_pickle("data_val.pkl"), pd.read_pickle("data_test.pkl")
+    #print("les types\n", val_df.dtypes)
+    
+    '''
+    #info sur le dataframe
+    print (val_df.info())
+    print("DESCRIBE\n", val_df.describe())
+    '''
+    
+    '''
+    #remplacer les cases vides
+    val_df['CATEGORIE_TITRE'].fillna('not defined', inplace = True)
+    print(val_df)
+    '''
+    
+    #supprimer une colonne
+    '''
+    train_df.pop(item = 'CATEGORIE_TITRE')
+    val_df.pop(item = 'CATEGORIE_TITRE')
+    test_df.pop(item = 'CATEGORIE_TITRE')
+    '''
+    train_df.pop(item = 'LIBELLE_ARRET')
+    val_df.pop(item = 'LIBELLE_ARRET')
+    test_df.pop(item = 'LIBELLE_ARRET')
+    
+    #val.insert(column = , value = [3, 4, 6, 7], loc=0)
+    
+    #print les valeurs unique : 
+    print(type(val_df['CATEGORIE_TITRE'].unique())) #array
+    
+    df = val_df
+    #parcourir 
+    for classe in df:
+        for i in df.index:
+            print(val_df['CATEGORIE_TITRE'][i])
+    
+    
+    
+    
 
+    
 if __name__ == "__main__":
     main()
