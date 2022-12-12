@@ -13,7 +13,7 @@ import time
 import numpy as np
 
 dn = 50.
-h=10
+h=20
 nepochs=100
 lr = 0.0001
 
@@ -31,10 +31,23 @@ testy = torch.Tensor([float(l.split(',')[1])/dn for l in ls[7:]]).view(1,-1,1)
 #Tensor to Dataset
 '''
 num = 2
-decal = 7
+decal = 2
+dn = 10000.
+
 train, val, test = np.load(open('jr_val_train'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_val'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True)
-trainx, trainy, valx, valy, testx, testy = torch.Tensor(train[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(val[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(test[:-decal]).view(1,-1,1), torch.Tensor(test[decal:]).view(1,-1,1)
-print(trainx.shape, trainy.shape, testx.shape, testy.shape)
+#trainx, trainy, valx, valy, testx, testy = torch.Tensor(train[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(val[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(test[:-decal]).view(1,-1,1), torch.Tensor(test[decal:]).view(1,-1,1)
+#train_year=2020, val_year=2019, test_year=2021
+print(train[3, 0])
+train[3, 0] = train[3, 0]/dn
+print(train[3, 0])
+for i in range(train.shape[0]):
+    train[i, 0] = train[i, 0]/dn
+for i in range(val.shape[0]):
+    val[i, 0] = val[i, 0]/dn
+for i in range(test.shape[0]):
+    test[i, 0] = test[i, 0]/dn
+trainx, trainy, testx, testy = torch.Tensor(val).view(1,-1,1), torch.Tensor(train).view(1,-1,1), torch.Tensor(train).view(1,-1,1), torch.Tensor(test).view(1,-1,1)
+
     
 trainds = torch.utils.data.TensorDataset(trainx, trainy)
 trainloader = torch.utils.data.DataLoader(trainds, batch_size=1, shuffle=False)
@@ -74,6 +87,9 @@ def test(mod):
     testloss, testr2score, nbatch = 0., 0., 0
     for data2 in testloader:
         inputs2, goldy2 = data2
+        inputs2 = inputs2[:,:-1,:]
+        print("haty",inputs2.size())
+        print("goldy",goldy2.size())
         #goldyy2 = goldy2[:,:-2,:] # QUE POUR LE CNN
         haty2 = mod(inputs2)
         loss2 = crit(haty2,goldy2)
@@ -93,6 +109,7 @@ def train(mod):
         totloss, totr2score, nbatch = 0., 0., 0
         for data in trainloader:
             inputs, goldy = data
+            goldy = goldy[:,:-1,:]
             #goldyy = goldy[:,:-2,:] # QUE POUR LE CNN
             optim.zero_grad()
             haty = mod(inputs)
