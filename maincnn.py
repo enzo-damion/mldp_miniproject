@@ -32,7 +32,7 @@ testy = torch.Tensor([float(l.split(',')[1])/dn for l in ls[7:]]).view(1,-1,1)
 
 h=10
 nepochs=1000  
-lr = 0.0001
+lr = 0.0005
 num = 2
 decal = 7
 
@@ -41,7 +41,7 @@ dn = 20000.
 
 
 
-train, val, test = np.load(open('jr_val_train'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_val'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True)
+train, val, test = np.load(open('jr_val_train'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True)
 
 #prédiction au jour+decal
 trainx, trainy, valx, valy, testx, testy = torch.Tensor(train[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(val[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(test[:-decal]).view(1,-1,1), torch.Tensor(test[decal:]).view(1,-1,1)
@@ -103,12 +103,8 @@ def test(mod):
     testloss, testr2score, nbatch = 0., 0., 0
     for data2 in testloader:
         inputs2, goldy2 = data2
-        #inputs2 = inputs2[:,:-2,:]
-        print("haty",inputs2.size())
-        print("goldy",goldy2.size())
-        goldy2 = goldy2[:, :-2, :]
+        goldy2 = goldy2[:,3:,:]
         haty2 = mod(inputs2)
-        
         loss2 = crit(haty2,goldy2)
         testr2score += r2_score(haty2,goldy2)
         testloss += loss2.item()
@@ -126,11 +122,9 @@ def train(mod):
         totloss, totr2score, nbatch = 0., 0., 0
         for data in trainloader:
             inputs, goldy = data
-            goldy = goldy[:,:-2,:]  
+            goldy = goldy[:,3:,:]
             optim.zero_grad()
             haty = mod(inputs)
-            print("haty",haty.size())
-            print("goldy",goldy.size())
             loss = crit(haty,goldy)
             totr2score += r2_score(haty, goldy)
             totloss += loss.item()
@@ -173,6 +167,7 @@ class Cnn(nn.Module):
     def __init__(self,nhid):
         super(Cnn, self).__init__()
         self.cnn = nn.Conv1d(1,nhid,3,1)
+        self.pool = nn.AvgPool1d(2,1)
         self.mlp = nn.Linear(nhid,1)
 
     def forward(self,x):
@@ -181,6 +176,7 @@ class Cnn(nn.Module):
         y = x.transpose(1,2)
         y = self.cnn(y)
         y = torch.relu(y)
+        y = self.pool(y)
         # B,D,T need B*T,D
         B,D,T = y.shape
         y = y.transpose(1,2)

@@ -31,7 +31,7 @@ testy = torch.Tensor([float(l.split(',')[1])/dn for l in ls[7:]]).view(1,-1,1)
 
 
 h=10
-nepochs=10000  
+nepochs=1000
 lr = 0.0001
 num = 2
 decal = 7
@@ -41,7 +41,7 @@ dn = 20000.
 
 
 
-train, val, test = np.load(open('jr_val_train'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_val'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True)
+train, val, test = np.load(open('jr_val_train'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True), np.load(open('jr_val_test'+'%s'%num+'.pkl', 'rb'),allow_pickle=True)
 
 #prédiction au jour+decal
 trainx, trainy, valx, valy, testx, testy = torch.Tensor(train[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(val[:-decal]).view(1,-1,1), torch.Tensor(train[decal:]).view(1,-1,1), torch.Tensor(test[:-decal]).view(1,-1,1), torch.Tensor(test[decal:]).view(1,-1,1)
