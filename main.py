@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
-# from sklearn.preprocessing import scale
+from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 pd.options.display.float_format = '{:.1f}'.format
+
+min_max_scaler = MinMaxScaler()
 
 def load_year(year):
     df_s1 = pd.read_csv(f"data/data-rf-{year}/{year}_S1_NB_FER.txt", sep="\t")
@@ -11,6 +13,7 @@ def load_year(year):
     df['NB_VALD'] = df['NB_VALD'].replace('Moins de 5', '0')
     df = df.groupby(['JOUR']).sum(numeric_only=True)
     df = df.reset_index(drop=True)
+    df[['NB_VALD']] = min_max_scaler.fit_transform(df[['NB_VALD']])
     return df
 
 def quick_analysis(train_df, val_df, test_df):
