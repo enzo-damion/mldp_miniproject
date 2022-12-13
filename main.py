@@ -14,7 +14,7 @@ import numpy as np
 
 dn = 50.
 h=20
-nepochs=100
+nepochs=5000
 lr = 0.0001
 
 '''
