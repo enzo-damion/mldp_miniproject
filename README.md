@@ -60,7 +60,6 @@ Tout d'abord, si on s'intéresse au nombre de validation par jour de manière in
 visible sur la figure 4 : \verb |Figure4_LSTM.png|. Pour un taux d'apprentissage de 0,001, on observe du surapprentissage dès l'époque 350 sur la Figure 5 : \verb |Figure5_LSTM_overfitting.png|, contre l'époque 3500 pour le rnn. \\\\
 
 \noindent Pour le réseaux GRU, on observe du surapprentissage à partir de l'époque 6000, même avec un learning rate de 0.0001 \verb |Figure6_GRU.png|. \\\\
-
-\noindent Parmi les 4 modèles testés, le RNN semble être le mieux qualifié avec un R2score allant jusqu'à ? 
+ 
 
 \end{document}
